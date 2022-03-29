@@ -26,12 +26,22 @@ namespace BulkyBookWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(IFormCollection fields)
+        public IActionResult Create(Category obj)
 		{
-            //_db.Categories.Add(obj);
-            var puppies = fields["Puppies"];
-            _db.SaveChanges();
-            return RedirectToAction("Index");
+			if (obj.Name == obj.DisplayOrder.ToString())
+			{
+                //Because the view is bound to the model, this will add an error to the name property of the model
+                //ModelState.AddModelError("name", "The DisplayOrder cannot exactly match the name");
+                //this will add an error to the "All" error list
+                ModelState.AddModelError("Error", "The DisplayOrder cannot exactly match the name");
+			}
+            if (ModelState.IsValid)
+			{
+                _db.Categories.Add(obj);
+			    _db.SaveChanges();
+                return RedirectToAction("Index");
+			}
+            return View();
 		}
     }
 }
