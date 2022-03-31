@@ -29,10 +29,7 @@ namespace BulkyBookWeb.IntegrationTests
         {
             var initResponse = await _client.GetAsync("/Category/Create");
             var responseString = await initResponse.Content.ReadAsStringAsync();
-            var htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(responseString);
-            var input = htmlDoc.DocumentNode.SelectSingleNode("//input[@name = \"__RequestVerificationToken\"]");
-            var token = input.Attributes["value"].Value;
+            var token = HtmlParse.GetVerificationToken(responseString);
 
             
             var postRequest = new HttpRequestMessage(HttpMethod.Post, "/Category/Create");
@@ -49,6 +46,19 @@ namespace BulkyBookWeb.IntegrationTests
             //var responseString = await response.Content.ReadAsStringAsync();
 
             response.EnsureSuccessStatusCode();
+
+        }
+    }
+
+    public class HtmlParse
+    {
+        public static string GetVerificationToken(string message)
+        {
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(message);
+            return htmlDoc.DocumentNode
+                .SelectSingleNode("//input[@name = \"__RequestVerificationToken\"]")
+                .Attributes["value"].Value;
 
         }
     }
