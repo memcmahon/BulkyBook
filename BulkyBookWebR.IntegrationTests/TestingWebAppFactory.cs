@@ -38,6 +38,8 @@ namespace BulkyBookWeb.IntegrationTests
                     try
                     {
                         appContext.Database.EnsureCreated();
+                        //InitializeDbForTests(appContext);
+                        
                     }
                     catch (Exception)
                     {
@@ -47,5 +49,15 @@ namespace BulkyBookWeb.IntegrationTests
             });
 
         }
+
+        //public void InitializeDbForTests(ApplicationDbContext db)
+        //{
+        //    db.AddRange(new List<CoverType>
+        //    {
+        //        new CoverType { Name = "Hard Cover" },
+        //        new CoverType { NameValueHeaderValue = "Paperback" }
+        //    });
+        //    db.SaveChanges();
+        //}
     }
 }
