@@ -39,7 +39,7 @@ namespace BulkyBookWeb.Controllers
             if (ModelState.IsValid)
 			{
                 _db.Add(obj);
-			    _db.Save();
+                _db.Save();
                 TempData["success"] = "Category Created Successfully";
                 return RedirectToAction("Index");
 			}

@@ -28,8 +28,8 @@ namespace BulkyBookWeb.IntegrationTests
         public async void Create_WhenPosted_AddsCategory()
         {
             var initResponse = await _client.GetAsync("/Category/Create");
-            var responseString = await initResponse.Content.ReadAsStringAsync();
-            var token = HtmlParse.GetVerificationToken(responseString);
+            var initResponseString = await initResponse.Content.ReadAsStringAsync();
+            var token = HtmlParse.GetVerificationToken(initResponseString);
 
 
             var postRequest = new HttpRequestMessage(HttpMethod.Post, "/Category/Create");
@@ -43,9 +43,12 @@ namespace BulkyBookWeb.IntegrationTests
             postRequest.Content = new FormUrlEncodedContent(formModel);
 
             var response = await _client.SendAsync(postRequest);
-            //var responseString = await response.Content.ReadAsStringAsync();
+            var responseString = await response.Content.ReadAsStringAsync();
 
             response.EnsureSuccessStatusCode();
+
+            //Assert.True(responseString.Contains("33"));
+            Assert.Contains("33", responseString);
 
         }
     }
