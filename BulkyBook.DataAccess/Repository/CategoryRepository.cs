@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BulkyBook.DataAccess.Repository
 {
@@ -15,6 +16,15 @@ namespace BulkyBook.DataAccess.Repository
         public CategoryRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
+        }
+
+        public IEnumerable<SelectListItem> GetSelectList()
+        {
+            return GetAll().Select(x => new SelectListItem
+            {
+                Text = x.Name,
+                Value = x.Id.ToString()
+            });
         }
 
         public void Update(Category obj)

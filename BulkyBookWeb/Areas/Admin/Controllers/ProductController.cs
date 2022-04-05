@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
+using BulkyBook.Models.Facades;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -23,32 +24,23 @@ namespace BulkyBookWeb.Controllers
 
         public IActionResult Upsert(int? id)
         {
-            Product product = new();
-            var categoryList = _unitOfWork.Category.GetAll()
-                .Select(u => new SelectListItem
-                {
-                    Text = u.Name,
-                    Value = u.Id.ToString()
-                });
-            var coverTypeList = _unitOfWork.CoverType.GetAll()
-                .Select(u => new SelectListItem
-                {
-                    Text = u.Name,
-                    Value = u.Id.ToString()
-                });
+            ProductFacade productF = new ProductFacade
+            {
+                Product = new Product(),
+                CategoryList = _unitOfWork.Category.GetSelectList(),
+                CoverTypeList = _unitOfWork.CoverType.GetSelectList()
+            };
 
             if (id == null || id == 0)
             {
                 //Create Product
-                ViewBag.CategoryList = categoryList;
-                ViewData["CoverTypeList"] = coverTypeList;
-                return View(product);
+                return View(productF);
             } else
             {
                 //update Product
             }
 
-            return View(product);
+            return View(productF);
         }
 
         [HttpPost]
