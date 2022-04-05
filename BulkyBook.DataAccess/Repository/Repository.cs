@@ -22,15 +22,40 @@ namespace BulkyBook.DataAccess.Repository
             _dbSet.Add(entity);
         }
 
-        public IEnumerable<T> GetAll()
+        //Include prop - "Category, CoverType"
+        public IEnumerable<T> GetAll(string? includeProperties = null)
         {
-            //IQueryable<T> query = _dbSet;
-            return _dbSet.ToList();
+            IQueryable<T> query = _dbSet;
+
+            if (includeProperties != null)
+            {
+                var includePropList = includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var includeProp in includePropList)
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+            return query.ToList();
         }
 
-        public T GetFirstOrDefault(Expression<Func<T, bool>> filter)
+        public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
-            return _dbSet.FirstOrDefault(filter);
+            IQueryable<T> query = _dbSet;
+
+            query = query.Where(filter);
+
+            var list = query.ToList();
+
+            if (includeProperties != null)
+            {
+                var includePropList = includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var includeProp in includePropList)
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+
+            return query.FirstOrDefault();
         }
 
         public void Remove(T entity)
