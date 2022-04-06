@@ -92,26 +92,32 @@ namespace BulkyBookWeb.Controllers
             return View(obj);
         }
 
-        public IActionResult Destroy(int? id)
-        {
-            var product = _unitOfWork.Product.GetFirstOrDefault(x => x.Id == id);
-
-            if (product == null)
-                return View();
-
-            _unitOfWork.Product.Remove(product);
-            _unitOfWork.Save();
-            TempData["success"] = "Product Destroyed";
-
-            return RedirectToAction("Index");
-        }
-
         #region API Calls
         [HttpGet]
         public IActionResult GetAll()
         {
             var productList = _unitOfWork.Product.GetAll("Category,CoverType");
             return Json(new {data = productList});
+        }
+
+        [HttpDelete]
+        public IActionResult Destroy(int? id)
+        {
+            var product = _unitOfWork.Product.GetFirstOrDefault(x => x.Id == id);
+
+            if (product == null)
+                return Json(new { success = false, message = "Error while deleting" });
+
+            var oldImagePath = Path.Combine(_environment.WebRootPath, product.ImageUrl.TrimStart('\\'));
+            if (System.IO.File.Exists(oldImagePath))
+            {
+                System.IO.File.Delete(oldImagePath);
+            }
+
+            _unitOfWork.Product.Remove(product);
+            _unitOfWork.Save();
+
+            return Json(new { success = true, message = "Product Deleted Successfully" });
         }
         #endregion
     }
