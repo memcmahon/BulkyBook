@@ -47,8 +47,9 @@ namespace BulkyBookWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(ProductFacade obj, IFormFile file)
+        public IActionResult Upsert(ProductFacade obj, IFormFile? file)
         {
+            
             if (ModelState.IsValid)
             {
                 string wwwRootPath = _environment.WebRootPath;
