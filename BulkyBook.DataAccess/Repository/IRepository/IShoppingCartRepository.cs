@@ -10,6 +10,6 @@ namespace BulkyBook.DataAccess.Repository.IRepository
 {
     public interface IShoppingCartRepository : IRepository<ShoppingCart>
     {
-        
+        void IncrementCount(ShoppingCart cart, int count);
     }
 }
