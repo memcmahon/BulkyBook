@@ -38,6 +38,24 @@ namespace BulkyBook.DataAccess.Repository
             return query.ToList();
         }
 
+        public IEnumerable<T> GetAllWhere(Expression<Func<T, bool>> filter, string? includeProperties = null)
+        {
+            IQueryable<T> query = _dbSet;
+
+            query = query.Where(filter);
+
+            if (includeProperties != null)
+            {
+                var includePropList = includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var includeProp in includePropList)
+                {
+                    query = query.Include(includeProp);
+                }
+            }
+
+            return query.ToList();
+        }
+
         public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
             IQueryable<T> query = _dbSet;

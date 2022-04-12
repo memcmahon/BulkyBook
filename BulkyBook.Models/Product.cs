@@ -58,5 +58,10 @@ namespace BulkyBook.Models
         [ValidateNever]
         public CoverType CoverType { get; set; }
 
+        public string shortDescription(int numWords)
+        {
+            return String.Join(' ', Description.Split(' ').Take(numWords));
+        }
+
     }
 }

@@ -25,5 +25,25 @@ namespace BulkyBook.Models
         [ForeignKey("ApplicationUserId")]
         [ValidateNever]
         public ApplicationUser ApplicationUser { get; set; }
+
+        public double cartPrice()
+        {
+            double cartPrice;
+
+            switch (Count)
+            {
+                case > 99:
+                    cartPrice = Product.Price100;
+                    break;
+                case > 49:
+                    cartPrice = Product.Price50;
+                    break;
+                default:
+                    cartPrice = Product.Price;
+                    break;
+            }
+
+            return cartPrice;
+        }
     }
 }
