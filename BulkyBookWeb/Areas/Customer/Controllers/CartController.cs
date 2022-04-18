@@ -31,6 +31,20 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             return View(cartFacade);
         }
 
+        public IActionResult Summary()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            var userId = claim.Value;
+
+            var cartFacade = new CartFacade
+            {
+                CartItems = _unitOfWork.ShoppingCart.GetAllWhere(c => c.ApplicationUserId == userId, "Product")
+            };
+
+            return View(cartFacade);
+        }
+
         public IActionResult IncreaseQuantity(int id)
         {
             var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(c => c.Id == id);
