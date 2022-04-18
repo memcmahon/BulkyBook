@@ -36,10 +36,22 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
             var userId = claim.Value;
+            var user = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == userId);
 
             var cartFacade = new CartFacade
             {
-                CartItems = _unitOfWork.ShoppingCart.GetAllWhere(c => c.ApplicationUserId == userId, "Product")
+                CartItems = _unitOfWork.ShoppingCart.GetAllWhere(c => c.ApplicationUserId == userId, "Product"),
+                OrderHeader = new OrderHeader
+                {
+                    User = user,
+                    ApplicationUserId = userId,
+                    Name = user.Name,
+                    Address = user.Address,
+                    City = user.City,
+                    State = user.State,
+                    PostalCode = user.PostalCode,
+                    PhoneNumber = user.PhoneNumber
+                }
             };
 
             return View(cartFacade);

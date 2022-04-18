@@ -9,6 +9,7 @@ namespace BulkyBook.Models.Facades
     public class CartFacade
     {
         public IEnumerable<ShoppingCart> CartItems { get; set; }
+        public OrderHeader OrderHeader { get; set; }
 
         public double Total()
         {
