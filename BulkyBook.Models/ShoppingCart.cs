@@ -45,5 +45,15 @@ namespace BulkyBook.Models
 
             return cartPrice;
         }
+
+        public void IncreaseQuantity()
+        {
+            Count++;
+        }
+
+        public void DecreaseQuantity()
+        {
+            Count--;
+        }
     }
 }
