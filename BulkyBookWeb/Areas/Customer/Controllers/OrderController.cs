@@ -47,7 +47,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             _unitOfWork.ShoppingCart.RemoveRange(cartFacade.CartItems);
             _unitOfWork.Save();
             
-            return View();
+            return RedirectToAction("Index", "Home");
         }
     }
 }
