@@ -1,4 +1,6 @@
 ﻿@model CartFacade
+@using Microsoft.Extensions.Options
+@inject IOptions<BulkyBook.Utility.StripeSettings> Stripe
 
 <form method="post" asp-controller="order" asp-action="create">
 	<input hidden asp-for="OrderHeader.ApplicationUserId" />
