@@ -47,46 +47,7 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             var user = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == cartFacade.OrderHeader.ApplicationUserId);
             if (user.CompanyId.GetValueOrDefault() == 0)
             {
-                cartFacade.OrderHeader.OrderStatus = SD.StatusPending;
-                cartFacade.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
-
-                //Stripe Payment
-                var domain = "https://localhost:44364/";
-                var options = new SessionCreateOptions
-                {
-                    LineItems = new List<SessionLineItemOptions>(),
-                    Mode = "payment",
-                    SuccessUrl = domain + $"customer/order/OrderConfirmation?id={cartFacade.OrderHeader.Id}",
-                    CancelUrl = domain + $"customer/cart/index",
-                };
-
-                foreach (var item in cartFacade.CartItems)
-                {
-                    var sessionLineItem = new SessionLineItemOptions
-                    {
-                        PriceData = new SessionLineItemPriceDataOptions
-                        {
-                            UnitAmount = (int)(item.cartPrice() * 100),
-                            Currency = "usd",
-                            ProductData = new SessionLineItemPriceDataProductDataOptions
-                            {
-                                Name = item.Product.Title,
-                            },
-
-                        },
-                        Quantity = item.Count,
-                    };
-
-                    options.LineItems.Add(sessionLineItem);
-                }
-
-                var service = new SessionService();
-                Session session = service.Create(options);
-
-                _unitOfWork.OrderHeader.UpdateStripePaymentId(cartFacade.OrderHeader.Id, session.Id, session.PaymentIntentId);
-                _unitOfWork.Save();
-
-                Response.Headers.Add("Location", session.Url);
+                ProcessPayment(cartFacade);
                 return new StatusCodeResult(303);
             } 
             else
@@ -96,13 +57,6 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
                 _unitOfWork.Save();
                 return RedirectToAction("OrderConfirmation", "Order", new { id = cartFacade.OrderHeader.Id });
             }
-
-            
-
-            //_unitOfWork.ShoppingCart.RemoveRange(cartFacade.CartItems);
-            //_unitOfWork.Save();
-
-            //return RedirectToAction("Index", "Home");
         }
 
         public IActionResult OrderConfirmation(int id)
@@ -127,6 +81,50 @@ namespace BulkyBookWeb.Areas.Customer.Controllers
             _unitOfWork.Save();
 
             return View(id);
+        }
+
+        private void ProcessPayment(CartFacade cartFacade)
+        {
+            cartFacade.OrderHeader.OrderStatus = SD.StatusPending;
+            cartFacade.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
+
+            //Stripe Payment
+            var domain = "https://localhost:44364/";
+            var options = new SessionCreateOptions
+            {
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = domain + $"customer/order/OrderConfirmation?id={cartFacade.OrderHeader.Id}",
+                CancelUrl = domain + $"customer/cart/index",
+            };
+
+            foreach (var item in cartFacade.CartItems)
+            {
+                var sessionLineItem = new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        UnitAmount = (int)(item.cartPrice() * 100),
+                        Currency = "usd",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = item.Product.Title,
+                        },
+
+                    },
+                    Quantity = item.Count,
+                };
+
+                options.LineItems.Add(sessionLineItem);
+            }
+
+            var service = new SessionService();
+            Session session = service.Create(options);
+
+            _unitOfWork.OrderHeader.UpdateStripePaymentId(cartFacade.OrderHeader.Id, session.Id, session.PaymentIntentId);
+            _unitOfWork.Save();
+
+            Response.Headers.Add("Location", session.Url);
         }
     }
 }
