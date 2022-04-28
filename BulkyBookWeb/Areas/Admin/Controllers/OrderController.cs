@@ -1,4 +1,5 @@
 ﻿using BulkyBook.DataAccess.Repository.IRepository;
+using BulkyBook.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
@@ -20,10 +21,19 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         //API Calls
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll(string? status)
         {
-            //var orderList = _unitOfWork.OrderDetail.GetAll(includeProperties: "OrderHeader");
-            var orderList = _unitOfWork.OrderHeader.GetAll(includeProperties: "User");
+			//var orderList = _unitOfWork.OrderDetail.GetAll(includeProperties: "OrderHeader");
+			//var status = HttpContext.Request.Query["status"].ToString();
+			IEnumerable<OrderHeader> orderList;
+			if (status != "all")
+			{
+                orderList = _unitOfWork.OrderHeader.GetAllWhere(o => o.OrderStatus == status ,includeProperties: "User");
+			}
+			else
+			{
+                orderList = _unitOfWork.OrderHeader.GetAll(includeProperties: "User");
+			}
             return Json(new { data = orderList });
         }
     }

@@ -1,9 +1,47 @@
-﻿
+﻿@{
+	var status = Context.Request.Query["status"];
+	var pending = "text-primary";
+	var inProcess = "text-primary";
+	var completed = "text-primary";
+	var all = "text-primary";
 
-<div class="container p-3">
-	<div class="row pt-4">
-		<div class="col-6">
+	switch (status)
+	{
+		case "pending":
+			pending = "active text-white";
+			break;
+		case "inProcess":
+			inProcess = "active text-white";
+			break;
+		case "completed":
+			completed = "active text-white";
+			break;
+		default:
+			all = "active text-white";
+			break;
+	}
+}
+
+<div class="p-3">
+	<div class="d-flex justify-content-between p-4">
+		<div class="p-2">
 			<h2 class="text-primary">Order List</h2>
+		</div>
+		<div class="p-2">
+			<ul class="list-group list-group-horizontal">
+				<a style="text-decoration:none;" asp-controller="Order" asp-action="index" asp-route-status="inProcess">
+					<li class="list-group-item @inProcess">In Process</li>
+				</a>
+				<a style="text-decoration:none;" asp-controller="Order" asp-action="index" asp-route-status="pending">
+					<li class="list-group-item @pending">Pending</li>
+				</a>
+				<a style="text-decoration:none;" asp-controller="Order" asp-action="index" asp-route-status="complete">
+					<li class="list-group-item @completed">Complete</li>
+				</a>
+				<a style="text-decoration:none;" asp-controller="Order" asp-action="index" asp-route-status="all">
+					<li class="list-group-item @all">All</li>
+				</a>
+			</ul>
 		</div>
 	</div>
 	<br />
