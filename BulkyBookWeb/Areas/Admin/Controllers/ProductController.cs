@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BulkyBookWeb.Controllers
 {
+    [Area("Admin")]
     public class ProductController : Controller
     {
         private IUnitOfWork _unitOfWork;
